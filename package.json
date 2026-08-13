@@ -1,0 +1,13 @@
+{
+  "name": "ledgerlens-ai",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "description": "AI receipt-to-finance workflow prototype for Malaysian SMEs",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test tests/api.test.mjs"
+  },
+  "engines": { "node": ">=20" },
+  "license": "MIT"
+}

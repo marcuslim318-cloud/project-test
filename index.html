@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LedgerLens AI | 智能财务闭环</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="brand login-brand"><span class="brand-mark">L</span><span>LedgerLens<br /><small>AI FINANCE</small></span></div>
+      <p class="eyebrow">MALAYSIA SME FINANCE</p><h1>欢迎回来</h1><p class="login-copy">登录你的企业账套，继续处理收据与财务数据。</p>
+      <label>账号<input id="login-username" autocomplete="username" placeholder="输入员工或管理员账号" /></label>
+      <label>密码<input id="login-password" type="password" autocomplete="current-password" placeholder="输入密码" /></label>
+      <button id="login-button" class="primary login-button">登录 LedgerLens →</button>
+      <p id="login-error" class="login-error"></p>
+      <div class="demo-accounts"><b>比赛演示账号</b><span>管理员：admin / admin123</span><span>财务管理员：finance / fin123</span><span>员工：employee / emp123</span><span>员工 2：staff2 / staff123</span></div>
+    </div>
+  </section>
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark">L</span><span>LedgerLens<br /><small>AI FINANCE</small></span></div>
+    <nav>
+      <button class="nav-item active" data-view="dashboard">⌂ <span>经营概览</span></button>
+      <button class="nav-item" data-view="upload">↑ <span>上传收据</span></button>
+      <button class="nav-item admin-only" data-view="whatsapp">◌ <span>WhatsApp 收据</span></button>
+      <button class="nav-item" data-view="review">✓ <span>审核中心</span><b id="review-badge">0</b></button>
+      <button class="nav-item" data-view="reports">▥ <span>财务报表</span></button>
+    </nav>
+    <div class="sidebar-bottom"><button class="settings-button" id="open-settings">⚙ AI 设置</button><button class="settings-button" id="logout-button">↪ 退出登录</button><p>Prototype · MY</p></div>
+  </aside>
+
+  <main>
+    <header><div><p class="eyebrow">AUGUST 2026 · MALAYSIA</p><h1 id="page-title">早上好，Aina</h1></div><div class="profile">AL</div></header>
+
+    <section id="dashboard" class="view active">
+      <div class="hero"><div><p>本月经营摘要</p><h2>让每一张收据，变成可靠的决策。</h2></div><button class="primary" data-go="upload">上传新收据 →</button></div>
+      <div class="metrics">
+        <article><span>本月收入</span><strong id="income">RM 24,800.00</strong><small class="positive">↑ 12.4% vs 上月</small></article>
+        <article><span>本月支出</span><strong id="expenses">RM 0.00</strong><small id="expense-note">尚未确认费用</small></article>
+        <article><span>预估净利润</span><strong id="profit">RM 24,800.00</strong><small class="positive">实时更新</small></article>
+        <article class="risk-card"><span>需关注项目</span><strong id="risk-count">0</strong><small>AI 已筛查全部单据</small></article>
+      </div>
+      <div class="grid-two">
+        <article class="panel"><div class="panel-title"><h3>支出结构</h3><span>本月</span></div><div id="category-chart" class="category-chart"><p class="empty">确认收据后将显示支出分类。</p></div></article>
+        <article class="panel"><div class="panel-title"><h3>AI 财务提醒</h3><span class="ai-pill">✦ AI</span></div><div id="insights" class="insights"><p class="insight">上传收据后，AI 会识别、审核，并将建议直接写入总账。</p></div></article>
+      </div>
+      <article class="panel"><div class="panel-title"><h3>最近交易</h3><button class="text-button" data-go="review">查看审核中心</button></div><div id="recent-list" class="transactions"><p class="empty">还没有已入账交易。</p></div></article>
+    </section>
+
+    <section id="upload" class="view">
+      <div class="section-heading"><div><p class="eyebrow">STEP 1 OF 3</p><h2>上传收据，交给 AI</h2><p>支持 JPG、PNG、WEBP。AI 将提取字段、推荐科目及审核风险。</p></div></div>
+      <div class="upload-layout">
+        <label class="drop-zone" id="drop-zone" for="receipt-file"><input id="receipt-file" type="file" accept="image/*" hidden /><div id="upload-placeholder"><span class="upload-icon">▱</span><h3>拖放或选择收据图片</h3><p>从手机拍下的收据也可以</p><span class="outline-button">选择图片</span></div><img id="preview-image" alt="收据预览" hidden /></label>
+        <div class="upload-guide"><span class="ai-pill">✦ AI RECEIPT READER</span><h3>系统会自动完成</h3><ol><li>读取商户、日期、金额与税额</li><li>推荐费用类别与会计分录</li><li>检测重复、异常金额与缺失信息</li><li>生成保留原件的审计轨迹</li></ol><p class="tip">提示：没有 API Key 也能用「演示模式」体验完整闭环。</p></div>
+      </div>
+      <div class="upload-actions"><button class="secondary" id="demo-receipt">使用演示收据</button><button class="primary" id="analyze-button" disabled>开始 AI 审核 →</button></div>
+      <div id="analysis-loading" class="loading" hidden><i></i><div><b>AI 正在审核这张收据</b><p>识别字段、匹配科目、扫描异常规则…</p></div></div>
+    </section>
+
+    <section id="whatsapp" class="view">
+      <div class="section-heading"><div><p class="eyebrow">OMNICHANNEL INBOX</p><h2>WhatsApp 收据入口</h2><p>员工把收据发到企业 WhatsApp Business，系统通过 Webhook 自动进入同一审核队列。</p></div><span class="status review">演示接口</span></div>
+      <div class="review-layout"><article class="panel"><div class="panel-title"><h3>连接状态</h3><span class="status approved">模拟已连接</span></div><div class="field-grid"><div class="field"><span>Business Phone ID</span><b>demo-my-sme-001</b></div><div class="field"><span>Webhook</span><b>/api/whatsapp/webhook</b></div><div class="field"><span>最近消息</span><b id="wa-last">等待演示消息</b></div><div class="field"><span>自动回复</span><b>已开启</b></div></div><button class="primary" id="wa-demo">模拟收到一张收据</button></article><article class="panel"><div class="panel-title"><h3>消息处理链路</h3><span class="ai-pill">✦ AI</span></div><div class="insights"><p class="insight">WhatsApp 图片 → Meta Webhook → 文件存储 → Gemini 识别 → 员工/管理员权限 → 审核中心</p><p class="insight" id="wa-reply">系统会回复：已收到收据，正在识别；识别完成后请管理员审核。</p></div></article></div>
+      <article class="panel"><div class="panel-title"><h3>生产版接入清单</h3><span>Meta Cloud API</span></div><div class="ledger"><div class="ledger-row"><span>1</span><span>创建 Meta Business App 与 WhatsApp Business Account</span><span class="status review">待配置</span></div><div class="ledger-row"><span>2</span><span>配置 HTTPS Webhook，验证 verify token，并接收 image message</span><span class="status review">待配置</span></div><div class="ledger-row"><span>3</span><span>用 access token 下载媒体，交给后端 AI 服务处理</span><span class="status review">待配置</span></div></div></article>
+    </section>
+
+    <section id="review" class="view">
+      <div class="section-heading"><div><p class="eyebrow">STEP 2 OF 3</p><h2>审核并确认入账</h2><p>AI 提供建议，最终决定始终由你掌控。</p></div><div class="legend"><span class="status approved">通过</span><span class="status review">待复核</span><span class="status rejected">高风险</span></div></div>
+      <div id="review-empty" class="empty-state"><span>⌁</span><h3>暂时没有待审核收据</h3><p>上传一张收据，审核结果会出现在这里。</p><button class="primary" data-go="upload">上传收据</button></div>
+      <div id="review-content" hidden><div class="review-layout"><article class="panel receipt-result"><div class="panel-title"><h3>识别结果</h3><span class="ai-pill">✦ AI 置信度 <b id="confidence">--</b></span></div><div id="result-vendor" class="vendor-title"></div><div class="field-grid" id="extracted-fields"></div><div class="receipt-thumb" id="result-image"></div></article><article class="panel risk-result"><div class="panel-title"><h3>AI 审核结论</h3><span id="review-status" class="status">--</span></div><div id="risk-summary"></div><div class="checks" id="checks"></div></article></div><article class="panel journal-panel"><div class="panel-title"><div><h3>建议会计分录</h3><p>根据公司账套和收据内容自动生成</p></div><button id="edit-entry" class="text-button">编辑类别</button></div><div id="journal-entry"></div><div class="approval-actions"><button class="secondary" id="reject-button">标记为需复核</button><button class="primary" id="approve-button">确认并入账 →</button></div></article></div>
+    </section>
+
+    <section id="reports" class="view">
+      <div class="section-heading"><div><p class="eyebrow">STEP 3 OF 3</p><h2>财务报表</h2><p>按账套映射生成的管理报表；正式 MPERS/MFRS 报表仍应由会计师审核。</p></div><button class="secondary" id="ask-ai">✦ 问 AI：利润为何变化？</button></div>
+      <div id="report-answer" class="ai-answer" hidden></div>
+      <div class="report-grid"><article class="panel statement"><div class="panel-title"><h3>损益表</h3><span>August 2026</span></div><div class="statement-row"><span>营业收入</span><b>RM 24,800.00</b></div><div class="statement-row"><span>营业费用</span><b id="report-expenses">RM 0.00</b></div><div class="statement-row total"><span>税前净利润</span><b id="report-profit">RM 24,800.00</b></div></article><article class="panel statement"><div class="panel-title"><h3>资产负债表摘要</h3><span>实时</span></div><div class="statement-row"><span>现金及银行余额</span><b id="cash-balance">RM 35,400.00</b></div><div class="statement-row"><span>应付账款</span><b id="payables">RM 0.00</b></div><div class="statement-row total"><span>净资产</span><b id="equity">RM 35,400.00</b></div></article></div>
+      <article class="panel"><div class="panel-title"><h3>总账审计轨迹</h3><span>每笔分录均关联原始收据</span></div><div id="ledger-list" class="ledger"><p class="empty">确认收据后，总账条目会显示在这里。</p></div></article>
+    </section>
+  </main>
+
+  <dialog id="settings"><form method="dialog" class="settings"><div class="panel-title"><h2>AI 设置</h2><button class="close" value="cancel">×</button></div><p>粘贴 Gemini API Key 后，可真实识别上传的收据图片。Key 只储存在当前浏览器中。</p><label>Gemini API Key<input id="api-key" type="password" placeholder="AIza..." autocomplete="off" /></label><label>模型<input id="model-name" value="gemini-2.5-flash" /></label><small>比赛原型会从浏览器调用 Gemini。正式产品必须改为后端代理、Secret Manager、加密存储，并在发送前取得企业对收据数据处理的授权。</small><menu><button value="cancel" class="secondary">取消</button><button id="save-settings" value="default" class="primary">保存</button></menu></form></dialog>
+  <div id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
