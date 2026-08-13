@@ -13,6 +13,7 @@
 | 项目落地计划 | `docs/IMPLEMENTATION_PLAN.md` | 完成 |
 | 可复现测试 | `tests/api.test.mjs`（4 个用例，`npm test`） | 完成 |
 | 最新网页 | `index.html` / `app.js` / `server.mjs` / `styles.css` | 完成 |
+| 公网演示入口 | <https://ledgerlens-ai-p819.onrender.com>（部署说明 `docs/DEPLOY_RENDER.md`） | 完成 |
 | 最新 PPT | `LedgerLens_AI_pitch.pptx`（由 `ppt_build/make_deck.mjs` 生成） | 完成 |
 | 运行说明/演示账号/已知限制 | `README.md` | 完成 |
 

@@ -1,5 +1,7 @@
 # 部署到 Render（免费 · 公开网址）
 
+> **本项目已部署**：https://ledgerlens-ai-p819.onrender.com （免费实例，闲置 15 分钟会休眠，首次访问需醒 30–60 秒）
+
 LedgerLens AI 是前后端一体的 Node 应用（登录、收据、审核都走 `server.mjs` 的 API），因此要用**能运行 Node 的服务**才能得到“可正常运作”的公网链接。这里用 Render 免费版，约 5–10 分钟。
 
 > 为什么不用 GitHub Pages？Pages 只能托管静态文件，`/api/*` 后端不会运行，登录和审核会失败。
