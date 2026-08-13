@@ -23,6 +23,7 @@
     <nav>
       <button class="nav-item active" data-view="dashboard">⌂ <span>经营概览</span></button>
       <button class="nav-item" data-view="upload">↑ <span>上传收据</span></button>
+      <button class="nav-item" data-view="myreceipts">☰ <span>我的收据</span></button>
       <button class="nav-item admin-only" data-view="whatsapp">◌ <span>WhatsApp 收据</span></button>
       <button class="nav-item" data-view="review">✓ <span>审核中心</span><b id="review-badge">0</b></button>
       <button class="nav-item" data-view="reports">▥ <span>财务报表</span></button>
@@ -58,9 +59,14 @@
       <div id="analysis-loading" class="loading" hidden><i></i><div><b>AI 正在审核这张收据</b><p>识别字段、匹配科目、扫描异常规则…</p></div></div>
     </section>
 
+    <section id="myreceipts" class="view">
+      <div class="section-heading"><div><p class="eyebrow">MY RECEIPTS</p><h2>我的收据</h2><p>查看每张收据的提交与审核状态；被拒绝的单据可修正后重新提交。</p></div></div>
+      <article class="panel"><div class="panel-title"><div><h3>提交记录</h3><p>数据来自 <code>/api/receipts</code>，实时更新。</p></div></div><div id="myreceipts-list" class="myreceipts-list"><p class="empty">加载中…</p></div></article>
+    </section>
+
     <section id="whatsapp" class="view">
       <div class="section-heading"><div><p class="eyebrow">OMNICHANNEL INBOX</p><h2>WhatsApp 收据入口</h2><p>员工把收据发到企业 WhatsApp Business，系统通过 Webhook 自动进入同一审核队列。</p></div><span class="status review">模拟接口 · 未发起真实 API</span></div>
-      <div class="review-layout"><article class="panel"><div class="panel-title"><h3>连接状态</h3><span class="status review">模拟接入 · 非真实连接</span></div><div class="field-grid"><div class="field"><span>Business Phone ID</span><b>demo-my-sme-001</b></div><div class="field"><span>Webhook</span><b>/api/whatsapp/webhook（未实现）</b></div><div class="field"><span>最近消息</span><b id="wa-last">等待演示消息</b></div><div class="field"><span>自动回复</span><b>已开启（模拟）</b></div></div><button class="primary" id="wa-demo">模拟收到一张收据</button><p class="tip">注意：点击按钮只会写入本地演示消息，不会向 Meta/WhatsApp 发送任何真实请求。</p></article><article class="panel"><div class="panel-title"><h3>消息处理链路</h3><span class="ai-pill">✦ AI</span></div><div class="insights"><p class="insight">生产链路：WhatsApp 图片 → Meta Cloud API Webhook → 文件存储 → Gemini 识别 → 审核中心</p><p class="insight" id="wa-reply">当前为演示链路：WhatsApp 入口只是前端模拟按钮，真实 Media/Webhook 尚未接入。</p></div></article></div>
+      <div class="review-layout"><article class="panel"><div class="panel-title"><h3>连接状态</h3><span class="status review">模拟接入 · 非真实连接</span></div><div class="field-grid"><div class="field"><span>Business Phone ID</span><b>demo-my-sme-001</b></div><div class="field"><span>Webhook</span><b>/api/whatsapp/webhook（未实现）</b></div><div class="field"><span>最近消息</span><b id="wa-last">等待演示消息</b></div><div class="field"><span>自动回复</span><b>已开启（模拟）</b></div></div><button class="primary" id="wa-demo">模拟收到一张收据</button><p class="tip">注意：点击会真实创建一张演示单据进入审核队列（通过 <code>/api/receipts</code>），但不会向 Meta/WhatsApp 发送任何真实请求。</p></article><article class="panel"><div class="panel-title"><h3>消息处理链路</h3><span class="ai-pill">✦ AI</span></div><div class="insights"><p class="insight">生产链路：WhatsApp 图片 → Meta Cloud API Webhook → 文件存储 → Gemini 识别 → 审核中心</p><p class="insight" id="wa-reply">当前为演示链路：WhatsApp 入口只是前端模拟按钮，真实 Media/Webhook 尚未接入。</p></div></article></div>
       <article class="panel"><div class="panel-title"><h3>生产版接入清单</h3><span>Meta Cloud API</span></div><div class="ledger"><div class="ledger-row"><span>1</span><span>创建 Meta Business App 与 WhatsApp Business Account</span><span class="status review">待配置</span></div><div class="ledger-row"><span>2</span><span>配置 HTTPS Webhook，验证 verify token，并接收 image message</span><span class="status review">待配置</span></div><div class="ledger-row"><span>3</span><span>用 access token 下载媒体，交给后端 AI 服务处理</span><span class="status review">待配置</span></div></div></article>
     </section>
 

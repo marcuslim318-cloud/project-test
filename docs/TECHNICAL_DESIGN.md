@@ -28,8 +28,12 @@ Gemini 接收图片及受限 JSON schema 提示词，返回供应商、日期、
 
 ## 集成边界（避免夸大）
 
-- **WhatsApp**：当前为前端“模拟消息”按钮，`/api/whatsapp/webhook` 未实现，不发起任何真实 Meta Cloud API 调用。
+- **WhatsApp**：页面「模拟收到一张收据」按钮会通过 `/api/receipts` **真实创建一张演示单据**进入审核队列，以此模拟"WhatsApp → 同一队列"的链路；但 Webhook `/api/whatsapp/webhook` 未实现，不发起任何真实 Meta Cloud API 调用。
 - **MyInvois / LHDN**：当前仅用 `myinvoisStatus` 字段做字面量规则判定；TIN/UUID/文件 Valid-Cancelled 状态查询属于生产路线，未接入官方 API。
+
+## 凭证存证
+
+上传真实收据时，前端计算图片内容的 SHA-256（`imageHash`）随单据保存；数据仅存字段与哈希，演示版不保存原件图片。生产版应在加密对象存储保存原件并记录存储路径与哈希。
 
 ## 生产演进
 

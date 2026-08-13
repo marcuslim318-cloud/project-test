@@ -2,6 +2,8 @@
 
 > 把一张收据，变成可追溯的财务决策。
 
+[![test](https://github.com/marcuslim318-cloud/project-test/actions/workflows/test.yml/badge.svg)](https://github.com/marcuslim318-cloud/project-test/actions/workflows/test.yml)
+
 LedgerLens AI 是面向马来西亚小微企业的 AI 财务闭环原型。员工上传收据，AI 提取关键字段；系统检查风险；管理员审核后生成可追溯的分录，并更新管理报表。
 
 ## 代码仓库
@@ -18,9 +20,12 @@ GitHub：<https://github.com/marcuslim318-cloud/project-test/tree/main>
 - 后端登录、Token 鉴权、共享收据审核队列（管理员工作台真实从 `/api/receipts` 读取全部待审核单据）
 - 后端规则引擎：重复收据、金额/税额校验、低置信度、缺失 MyInvois 信息自动标记待复核
 - 登录 API 只返回 `username / role / name / token`，绝不返回密码
+- 员工端「我的收据」：查看每张单据的审核状态与被拒原因，修正后可重新提交
+- 凭证哈希（SHA-256）存证：上传真实收据时保存图片指纹，支撑审计轨迹
 - 员工和管理员的状态通知
 - 管理报表、总账审计轨迹与 AI 摘要
-- WhatsApp Business 的模拟入口与生产接入路线
+- WhatsApp Business 模拟入口：点击按钮会通过 `/api/receipts` 真实创建一张演示单据进入审核队列（但不发起任何真实 Meta API 调用）
+- GitHub Actions CI：推送即运行全部集成测试
 
 ## 本地运行
 
@@ -66,12 +71,14 @@ npm start
 npm test
 ```
 
-共 4 个集成测试，全部只依赖 Node 内置测试框架与 `fetch`，不依赖网络或外部密钥：
+共 6 个集成测试，全部只依赖 Node 内置测试框架与 `fetch`，不依赖网络或外部密钥：
 
 1. **登录安全**：`admin / finance / employee / staff2` 四个账号登录后，响应中都不包含密码字段；错误密码返回 401。
 2. **正常收据**：员工提交 → 管理员调用 `GET /api/receipts` 读取全部待审核单据 → 批准入账 → 员工收到“已审核并入账”通知。
 3. **重复收据**：相同收据号再次提交时，后端规则引擎标记 `risk: review`、风险原因包含“重复收据”，并在检查项中给出 `bad` 类型的重复提示。
 4. **模糊/缺失 MyInvois 信息的高风险收据**：低置信度（41%）、缺失收据号与日期、MyInvois 状态为空时，自动标记 `risk: review`，风险原因同时指出“MyInvois 无 UUID / 关键信息不完整 / 置信度低”。
+5. **WhatsApp 模拟收据真实入队**：与页面「模拟收到一张收据」按钮相同的 POST 路径，提交后管理员能从 `/api/receipts` 读到该待审核单据。
+6. **凭证哈希存证**：带 `imageHash`（SHA-256）提交时，该值会被持久化保存。
 
 ## 架构
 

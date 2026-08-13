@@ -82,4 +82,28 @@ test('模糊/缺失 MyInvois 信息：低置信度或信息缺失的高风险收
   assert.equal(queue.body.filter(r => r.status === 'pending' && r.id === fuzzy.body.id).length, 1);
 });
 
+test('WhatsApp 模拟收据通过 /api/receipts 真实进入审核队列（与页面按钮同一路径）', async () => {
+  const employee = await login('employee', 'emp123');
+  const wa = await submit(employee.body.token, {
+    vendor: "McDonald's Malaysia (WhatsApp 模拟)", date: '2026-08-13', invoiceNumber: 'MCD-WA-0412', total: 26.9,
+    tax: 0, currency: 'MYR', category: 'Meals & Entertainment', confidence: 88, myinvoisStatus: 'Reference detected',
+  });
+  assert.equal(wa.status, 201);
+  assert.equal(wa.body.status, 'pending');
+  const admin = await login('admin', 'admin123');
+  const queue = await call('/api/receipts', { headers: { Authorization: `Bearer ${admin.body.token}` } });
+  assert.equal(queue.body.filter(r => r.status === 'pending' && r.id === wa.body.id).length, 1);
+});
+
+test('收据凭证哈希（imageHash）会被持久化，作为审计存证', async () => {
+  const employee = await login('employee', 'emp123');
+  const hash = 'a'.repeat(64);
+  const rec = await submit(employee.body.token, {
+    vendor: 'Original Copy Shop', date: '2026-08-12', invoiceNumber: 'COPY-0911', total: 15, tax: 0,
+    currency: 'MYR', category: 'Office Supplies', confidence: 92, myinvoisStatus: 'Reference detected', imageHash: hash,
+  });
+  assert.equal(rec.status, 201);
+  assert.equal(rec.body.imageHash, hash);
+});
+
 test.after(async () => { app.kill(); await fs.rm(db, { force: true }); });
