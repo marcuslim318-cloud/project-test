@@ -42,6 +42,37 @@ function requireAdmin(req, res) {
 function notify(db, to, type, message) {
   db.notifications.unshift({ id: crypto.randomUUID(), to, type, message, createdAt: new Date().toISOString(), read: false });
 }
+function evaluateRisk(input, existing) {
+  const checks = [];
+  const total = Number(input.total);
+  const tax = Number(input.tax || 0);
+  const totalMathOk = !Number.isNaN(total) && (total - tax) >= 0;
+  checks.push({ label: totalMathOk ? '金额计算一致' : '金额与税额匹配待复核', type: totalMathOk ? 'ok' : 'warn' });
+  const inv = String(input.invoiceNumber || '').trim();
+  const dup = existing.find(r => r.status !== 'rejected' && String(r.invoiceNumber || '').trim().toLowerCase() === inv.toLowerCase() && inv);
+  checks.push({ label: dup ? `发现重复收据：${dup.invoiceNumber}（${dup.uploadedByName || dup.uploadedBy} 已提交）` : '未发现重复收据', type: dup ? 'bad' : 'ok' });
+  const confidence = Number(input.confidence ?? 0) || 0;
+  const myinvoisRaw = String(input.myinvoisStatus || '').toLowerCase();
+  const myInvoisVerified = /(uuid|reference|detected|valid)/.test(myinvoisRaw);
+  checks.push({ label: myInvoisVerified ? 'MyInvois 信息已识别' : 'MyInvois 无 UUID/参考号，需保留凭证', type: myInvoisVerified ? 'ok' : 'warn' });
+  const missing = [];
+  if (!input.vendor) missing.push('商户');
+  if (!inv) missing.push('收据号');
+  if (Number.isNaN(total) || total <= 0) missing.push('金额');
+  if (!input.date) missing.push('日期');
+  if (missing.length) checks.push({ label: `缺失关键字段：${missing.join('、')}`, type: 'bad' });
+  const lowConf = confidence > 0 && confidence < 70;
+  if (lowConf) checks.push({ label: `AI 置信度低（${confidence}%）`, type: 'warn' });
+
+  let risk = 'approved';
+  const reasons = [];
+  if (dup) { risk = 'review'; reasons.push('系统检测到重复收据，需人工确认是否存在重复报销。'); }
+  if (missing.length) { risk = 'review'; reasons.push(`关键信息不完整（${missing.join('、')}），无法可靠核对。`); }
+  if (lowConf) { risk = 'review'; reasons.push(`AI 置信度仅 ${confidence}%，建议人工复核。`); }
+  if (!myInvoisVerified && !dup) { risk = 'review'; reasons.push('收据未包含可验证的 MyInvois UUID，需保留原件后核对有效性。'); }
+  if (risk === 'approved') reasons.unshift('金额、字段与历史记录核对一致，可正常入账。');
+  return { risk, riskReason: reasons.join(' '), checks };
+}
 
 const server = http.createServer(async (req, res) => {
   try {
@@ -55,6 +86,10 @@ const server = http.createServer(async (req, res) => {
       const user = { username, role: account.role, name: account.name };
       sessions.set(token, user);
       return send(res, 200, { ...user, token });
+    }
+    if (url.pathname === '/api/accounts' && req.method === 'GET') {
+      const user = requireUser(req, res); if (!user) return;
+      return send(res, 200, Object.entries(accounts).map(([username, a]) => ({ username, role: a.role, name: a.name })));
     }
     if (url.pathname === '/api/logout' && req.method === 'POST') {
       sessions.delete(req.headers.authorization?.replace('Bearer ', ''));
@@ -70,7 +105,8 @@ const server = http.createServer(async (req, res) => {
       const user = requireUser(req, res); if (!user) return;
       const input = await body(req);
       const db = await readDb();
-      const receipt = { ...input, id: crypto.randomUUID(), uploadedBy: user.username, uploadedByName: user.name, status: 'pending', createdAt: new Date().toISOString() };
+      const evaluated = evaluateRisk(input, db.receipts);
+      const receipt = { ...input, ...evaluated, id: crypto.randomUUID(), uploadedBy: user.username, uploadedByName: user.name, status: 'pending', createdAt: new Date().toISOString() };
       db.receipts.unshift(receipt);
       notify(db, 'admin', 'new_receipt', `${user.name} 提交了一张新收据待审核。`);
       await writeDb(db);
