@@ -32,6 +32,8 @@ npm start
 
 打开 `http://localhost:8000`。
 
+需要公网入口（如比赛演示）？见 [部署到 Render](docs/DEPLOY_RENDER.md)（免费，约 5 分钟拿到 `https://ledgerlens-ai.onrender.com` 类地址）。
+
 如果系统没有 Node，可使用 Codex 附带运行时：
 
 ```powershell

@@ -1,0 +1,17 @@
+# Render Blueprint — LedgerLens AI
+# 用法：在 https://dashboard.render.com/blueprints 选择本仓库（分支 main），Render 会自动读取本文件并创建免费 Web Service。
+services:
+  - type: web
+    name: ledgerlens-ai
+    runtime: node
+    plan: free
+    branch: main
+    region: singapore
+    buildCommand: "npm install"
+    startCommand: "node server.mjs"
+    healthCheckPath: /
+    autoDeploy: true
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
