@@ -27,6 +27,7 @@
       <button class="nav-item admin-only" data-view="whatsapp">◌ <span>WhatsApp 收据</span></button>
       <button class="nav-item" data-view="review">✓ <span>审核中心</span><b id="review-badge">0</b></button>
       <button class="nav-item" data-view="reports">▥ <span>财务报表</span></button>
+      <button class="nav-item admin-only" data-view="admin">◈ <span>数据管理</span></button>
     </nav>
     <div class="sidebar-bottom"><button class="settings-button" id="open-settings">⚙ AI 设置</button><button class="settings-button" id="logout-button">↪ 退出登录</button><p>Prototype · MY</p></div>
   </aside>
@@ -55,7 +56,8 @@
         <label class="drop-zone" id="drop-zone" for="receipt-file"><input id="receipt-file" type="file" accept="image/*" hidden /><div id="upload-placeholder"><span class="upload-icon">▱</span><h3>拖放或选择收据图片</h3><p>从手机拍下的收据也可以</p><span class="outline-button">选择图片</span></div><img id="preview-image" alt="收据预览" hidden /></label>
         <div class="upload-guide"><span class="ai-pill">✦ AI RECEIPT READER</span><h3>系统会自动完成</h3><ol><li>读取商户、日期、金额与税额</li><li>推荐费用类别与会计分录</li><li>检测重复、异常金额与缺失信息</li><li>生成保留原件的审计轨迹</li></ol><p class="tip">提示：没有 API Key 也能用「演示模式」体验完整闭环。</p></div>
       </div>
-      <div class="upload-actions"><button class="secondary" id="demo-receipt">使用演示收据</button><button class="primary" id="analyze-button" disabled>开始 AI 审核 →</button></div>
+      <div class="upload-actions"><div class="demo-group"><span class="demo-label">演示数据：</span><button class="secondary demo-btn" data-demo="normal">正常单据</button><button class="secondary demo-btn" data-demo="lowconf">置信度低</button><button class="secondary demo-btn" data-demo="duplicate">重复单据</button></div><button class="primary" id="analyze-button" disabled>开始 AI 审核 →</button></div>
+      <p class="tip">演示顺序建议：先「正常单据」，再「重复单据」可现场展示重复拦截；「置信度低」展示低置信度待复核。三种数据都无需 API Key。</p>
       <div id="analysis-loading" class="loading" hidden><i></i><div><b>AI 正在审核这张收据</b><p>识别字段、匹配科目、扫描异常规则…</p></div></div>
     </section>
 
@@ -81,6 +83,11 @@
       <div id="report-answer" class="ai-answer" hidden></div>
       <div class="report-grid"><article class="panel statement"><div class="panel-title"><h3>损益表</h3><span>August 2026</span></div><div class="statement-row"><span>营业收入</span><b>RM 24,800.00</b></div><div class="statement-row"><span>营业费用</span><b id="report-expenses">RM 0.00</b></div><div class="statement-row total"><span>税前净利润</span><b id="report-profit">RM 24,800.00</b></div></article><article class="panel statement"><div class="panel-title"><h3>资产负债表摘要</h3><span>实时</span></div><div class="statement-row"><span>现金及银行余额</span><b id="cash-balance">RM 35,400.00</b></div><div class="statement-row"><span>应付账款</span><b id="payables">RM 0.00</b></div><div class="statement-row total"><span>净资产</span><b id="equity">RM 35,400.00</b></div></article></div>
       <article class="panel"><div class="panel-title"><h3>总账审计轨迹</h3><span>每笔分录均关联原始收据</span></div><div id="ledger-list" class="ledger"><p class="empty">确认收据后，总账条目会显示在这里。</p></div></article>
+    </section>
+
+    <section id="admin" class="view">
+      <div class="section-heading"><div><p class="eyebrow">ADMIN ONLY</p><h2>数据管理</h2><p>仅管理员可见。可查看系统数据量，并在需要时清空全部演示数据。</p></div><span class="status review">仅管理员</span></div>
+      <div class="report-grid"><article class="panel"><div class="panel-title"><h3>数据概览</h3><span id="admin-total">0 条</span></div><div id="admin-stats" class="admin-stats"><p class="empty">加载中…</p></div></article><article class="panel danger-panel"><div class="panel-title"><h3>清空演示数据</h3><span>不可恢复</span></div><p class="insight">删除全部收据与通知，重置为空白库。仅用于演示复位；正式系统请使用受控的数据库清理流程。</p><button class="danger" id="reset-data">清空全部数据</button></article></div>
     </section>
   </main>
 

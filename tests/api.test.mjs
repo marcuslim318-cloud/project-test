@@ -106,4 +106,17 @@ test('收据凭证哈希（imageHash）会被持久化，作为审计存证', as
   assert.equal(rec.body.imageHash, hash);
 });
 
+test('仅管理员可清空全部数据：admin 可重置，employee 被拒绝 403', async () => {
+  const employee = await login('employee', 'emp123');
+  const denied = await call('/api/admin/reset', { method: 'POST', headers: { Authorization: `Bearer ${employee.body.token}` }, body: '{}' });
+  assert.equal(denied.status, 403);
+
+  const admin = await login('admin', 'admin123');
+  const reset = await call('/api/admin/reset', { method: 'POST', headers: { Authorization: `Bearer ${admin.body.token}` }, body: '{}' });
+  assert.equal(reset.status, 200);
+  assert.equal(reset.body.ok, true);
+  const queue = await call('/api/receipts', { headers: { Authorization: `Bearer ${admin.body.token}` } });
+  assert.equal(queue.body.length, 0);
+});
+
 test.after(async () => { app.kill(); await fs.rm(db, { force: true }); });

@@ -134,6 +134,11 @@ const server = http.createServer(async (req, res) => {
       db.notifications.filter(n => n.to === target).forEach(n => n.read = true);
       await writeDb(db); return send(res, 200, { ok: true });
     }
+    if (url.pathname === '/api/admin/reset' && req.method === 'POST') {
+      const user = requireAdmin(req, res); if (!user) return;
+      await writeDb({ receipts: [], notifications: [] });
+      return send(res, 200, { ok: true, clearedAt: new Date().toISOString() });
+    }
     const requested = url.pathname === '/' ? 'index.html' : decodeURIComponent(url.pathname.slice(1));
     const file = path.resolve(root, requested);
     if (!file.startsWith(root)) return send(res, 403, { error: '禁止访问。' });
