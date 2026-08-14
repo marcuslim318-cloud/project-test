@@ -37,7 +37,7 @@
 6. **后端规则引擎（确定性、可复现）**：四类判定规则 + 输出 risk/riskReason/checks。
 7. **技术架构**：Web UI → Node.js HTTP API → data.json；Token/RBAC；Gemini（可选本地演示）；MyInvois/WhatsApp 为生产路线。比赛版全局架构图。
 8. **安全性**：登录 API 绝不返回密码；凭证哈希存证；权限隔离；比赛版边界（明文口令/单文件库仅演示）。
-9. **三种可复现测试**：正常收据闭环；重复收据；模糊/缺失 MyInvois 高风险单据。（另可提及 WhatsApp 模拟入队、哈希存证两个附加用例，共 6 条）
+9. **可复现测试**：正常收据闭环；重复收据；模糊/缺失 MyInvois 高风险单据；WhatsApp 模拟入队；凭证哈希存证；管理员数据重置（共 7 条，`npm test` 全绿）。
 10. **用户价值与成本**：减少手工录入、拦截重复报销、审核周期缩短、收据→报表可追溯；对比「原来对账 X 分钟 → 现在几分钟」的量化话术。
 11. **商业模式**：Starter RM49/月、Growth RM149/月、Pro RM299/月起、设置费 RM300–800（建议价，非已验证报价）。
 12. **集成路线（诚实）**：WhatsApp → Meta Cloud API Webhook；MyInvois → LHDN API TIN/UUID/状态；数据库 → PostgreSQL/Supabase；AI Key → 后端代理；对象存储加密原件。

@@ -31,7 +31,7 @@ LedgerLens AI 是前后端一体的 Node 应用（登录、收据、审核都走
 
 1. 打开返回的 `https://xxx.onrender.com`，应看到登录页。
 2. 用 `admin / admin123` 登录 → 审核中心从 `/api/receipts` 读取单据；用 `employee / emp123` 上传演示收据 → 管理员获批后员工收到通知。
-3.（可选）在额外终端跑 `node --test tests/api.test.mjs` 验证 4 个用例。
+3.（可选）在额外终端跑 `node --test tests/api.test.mjs` 验证 7 个用例。
 
 ## 你要知道的限制（诚实声明）
 

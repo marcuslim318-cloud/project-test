@@ -1,5 +1,6 @@
 data.json
 .env
+LedgerLensAI/
 node_modules/
 *.pptx.inspect.ndjson
 *.log
